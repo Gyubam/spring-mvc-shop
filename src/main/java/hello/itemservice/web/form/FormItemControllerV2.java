@@ -16,9 +16,9 @@ import java.util.*;
 
 @Slf4j
 @Controller
-@RequestMapping("/form/items")
+@RequestMapping("/form/v2/items")
 @RequiredArgsConstructor
-public class FormItemController {
+public class FormItemControllerV2 {
 
     private final ItemRepository itemRepository;
 
@@ -27,7 +27,7 @@ public class FormItemController {
     public String items(Model model) {
         List<Item> items = itemRepository.findAll();
         model.addAttribute("items", items);
-        return "form/items";
+        return "form/v2/items";
     }
 
     @GetMapping("/{itemId}")
@@ -52,7 +52,7 @@ public class FormItemController {
         model.addAttribute("deliveryCodes", deliveryCodes);
         // 체크박스, 라디오버튼, 텍스트상자 설정 코드 -- end
 
-        return "form/item";
+        return "form/v2/item";
     }
 
     @GetMapping("/add")
@@ -76,7 +76,7 @@ public class FormItemController {
         model.addAttribute("deliveryCodes", deliveryCodes);
         // 체크박스, 라디오버튼, 텍스트상자 설정 코드 -- end
 
-        return "form/addForm";
+        return "form/v2/addForm";
     }
 
     @PostMapping("/add")
@@ -128,7 +128,7 @@ public class FormItemController {
             model.addAttribute("deliveryCodes", deliveryCodes);
             // 체크박스, 라디오버튼, 텍스트상자 설정 코드 -- end
 
-            return "form/addForm";
+            return "form/v2/addForm";
         }
 
         log.info("item.open={}", item.getOpen());
@@ -139,7 +139,7 @@ public class FormItemController {
         // 리다이렉트 주소 매개변수로 사용, status 는 쿼리로 들어감
         redirectAttributes.addAttribute("itemId", savedItem.getId());
         redirectAttributes.addAttribute("status", true);
-        return "redirect:/form/items/{itemId}";
+        return "redirect:/form/v2/items/{itemId}";
     }
 
     @GetMapping("/{itemId}/edit")
@@ -164,13 +164,13 @@ public class FormItemController {
         model.addAttribute("deliveryCodes", deliveryCodes);
         // 체크박스, 라디오버튼, 텍스트상자 설정 코드 -- end
 
-        return "form/editForm";
+        return "form/v2/editForm";
     }
 
     @PostMapping("/{itemId}/edit")
     public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
         itemRepository.update(itemId, item);
-        return "redirect:/form/items/{itemId}";
+        return "redirect:/form/v2/items/{itemId}";
     }
 
 }
