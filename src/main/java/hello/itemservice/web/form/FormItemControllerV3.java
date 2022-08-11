@@ -159,8 +159,46 @@ public class FormItemControllerV3 {
     }
 
     @PostMapping("/{itemId}/edit")
-    public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
+    public String edit(@PathVariable Long itemId,
+                       @Validated @ModelAttribute Item item,
+                       BindingResult bindingResult,
+                       Model model) {
+
+
+        //특정 필드가 아닌 복합 룰 검증
+        if (item.getPrice() != null && item.getQuantity() != null) {
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if (resultPrice < 10000) {
+                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
+            }
+        }
+
+        //검증에 실패하면 다시 입력 폼으로 이동
+        if (bindingResult.hasErrors()) {
+            log.info("bindingResult = {}", bindingResult);
+
+            // 체크박스, 라디오버튼, 텍스트상자 설정 코드 -- start
+            Map<String, String> regions = new LinkedHashMap<>();
+            regions.put("SEOUL", "서울");
+            regions.put("BUSAN", "부산");
+            regions.put("JEJU", "제주");
+            model.addAttribute("regions",regions);
+
+            ItemType[] values = ItemType.values();
+            model.addAttribute("itemTypes", values);
+
+            List<DeliveryCode> deliveryCodes = new ArrayList<>();
+            deliveryCodes.add(new DeliveryCode("FAST", "빠른 배송"));
+            deliveryCodes.add(new DeliveryCode("NORMAL", "일반 배송"));
+            deliveryCodes.add(new DeliveryCode("SLOW", "느린 배송"));
+            model.addAttribute("deliveryCodes", deliveryCodes);
+            // 체크박스, 라디오버튼, 텍스트상자 설정 코드 -- end
+
+            return "form/v3/editForm";
+        }
+
         itemRepository.update(itemId, item);
+
         return "redirect:/form/v3/items/{itemId}";
     }
 
