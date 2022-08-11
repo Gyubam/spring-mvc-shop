@@ -13,14 +13,14 @@ public class Item {
 
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "공백일 수 없습니다.")
     private String itemName;
 
-    @NotNull
+    @NotNull(message = "공백일 수 없습니다.")
     @Range(min = 1000, max = 1000000)
     private Integer price;
 
-    @NotNull
+    @NotNull(message = "공백일 수 없습니다.")
     @Max(9999)
     private Integer quantity;
 
