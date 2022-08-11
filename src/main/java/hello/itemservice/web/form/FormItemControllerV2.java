@@ -12,6 +12,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -24,7 +26,14 @@ import java.util.*;
 public class FormItemControllerV2 {
 
     private final ItemRepository itemRepository;
+    private final ItemValidator itemValidator;
 
+
+    // 컨트롤러 실행될때마다 검증 기능 수행행
+   @InitBinder
+    public void init(WebDataBinder dataBinder) {
+        dataBinder.addValidators(itemValidator);
+    }
 
     @GetMapping
     public String items(Model model) {
@@ -273,33 +282,120 @@ public class FormItemControllerV2 {
 //        return "redirect:/form/v2/items/{itemId}";
 //    }
 
+//    @PostMapping("/add")
+//    public String addItemV4(@ModelAttribute Item item,
+//                            BindingResult bindingResult,
+//                            RedirectAttributes redirectAttributes,
+//                            Model model) {
+//
+//        //검증 오류 결과를 보관
+//        Map<String, String> errors = new HashMap<>();
+//
+//        //검증 로직
+//        if (!StringUtils.hasText(item.getItemName())) {
+//            bindingResult.rejectValue("itemName", "required");
+//        }
+//        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
+//            bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null);
+//        }
+//        if (item.getQuantity() == null || item.getQuantity() > 9999) {
+//            bindingResult.rejectValue("quantity", "max", new Object[]{9999}, null);
+//        }
+//
+//        //특정 필드가 아닌 복합 룰 검증
+//        if (item.getPrice() != null && item.getQuantity() != null) {
+//            int resultPrice = item.getPrice() * item.getQuantity();
+//            if (resultPrice < 10000) {
+//                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
+//            }
+//        }
+//
+//        //검증에 실패하면 다시 입력 폼으로 이동
+//        if (bindingResult.hasErrors()) {
+//            log.info("bindingResult = {}", bindingResult);
+//
+//            // 체크박스, 라디오버튼, 텍스트상자 설정 코드 -- start
+//            Map<String, String> regions = new LinkedHashMap<>();
+//            regions.put("SEOUL", "서울");
+//            regions.put("BUSAN", "부산");
+//            regions.put("JEJU", "제주");
+//            model.addAttribute("regions",regions);
+//
+//            ItemType[] values = ItemType.values();
+//            model.addAttribute("itemTypes", values);
+//
+//            List<DeliveryCode> deliveryCodes = new ArrayList<>();
+//            deliveryCodes.add(new DeliveryCode("FAST", "빠른 배송"));
+//            deliveryCodes.add(new DeliveryCode("NORMAL", "일반 배송"));
+//            deliveryCodes.add(new DeliveryCode("SLOW", "느린 배송"));
+//            model.addAttribute("deliveryCodes", deliveryCodes);
+//            // 체크박스, 라디오버튼, 텍스트상자 설정 코드 -- end
+//
+//            return "form/v2/addForm";
+//        }
+//
+//        log.info("item.open={}", item.getOpen());
+//        log.info("item.regions={}", item.getRegions());
+//        log.info("item.itemType={}", item.getItemType());
+//        Item savedItem = itemRepository.save(item);
+//
+//        // 리다이렉트 주소 매개변수로 사용, status 는 쿼리로 들어감
+//        redirectAttributes.addAttribute("itemId", savedItem.getId());
+//        redirectAttributes.addAttribute("status", true);
+//        return "redirect:/form/v2/items/{itemId}";
+//    }
+
+
+//    @PostMapping("/add")
+//    public String addItemV5(@ModelAttribute Item item,
+//                            BindingResult bindingResult,
+//                            RedirectAttributes redirectAttributes,
+//                            Model model) {
+//
+//        itemValidator.validate(item, bindingResult);
+//
+//
+//        //검증에 실패하면 다시 입력 폼으로 이동
+//        if (bindingResult.hasErrors()) {
+//            log.info("bindingResult = {}", bindingResult);
+//
+//            // 체크박스, 라디오버튼, 텍스트상자 설정 코드 -- start
+//            Map<String, String> regions = new LinkedHashMap<>();
+//            regions.put("SEOUL", "서울");
+//            regions.put("BUSAN", "부산");
+//            regions.put("JEJU", "제주");
+//            model.addAttribute("regions",regions);
+//
+//            ItemType[] values = ItemType.values();
+//            model.addAttribute("itemTypes", values);
+//
+//            List<DeliveryCode> deliveryCodes = new ArrayList<>();
+//            deliveryCodes.add(new DeliveryCode("FAST", "빠른 배송"));
+//            deliveryCodes.add(new DeliveryCode("NORMAL", "일반 배송"));
+//            deliveryCodes.add(new DeliveryCode("SLOW", "느린 배송"));
+//            model.addAttribute("deliveryCodes", deliveryCodes);
+//            // 체크박스, 라디오버튼, 텍스트상자 설정 코드 -- end
+//
+//            return "form/v2/addForm";
+//        }
+//
+//        log.info("item.open={}", item.getOpen());
+//        log.info("item.regions={}", item.getRegions());
+//        log.info("item.itemType={}", item.getItemType());
+//        Item savedItem = itemRepository.save(item);
+//
+//        // 리다이렉트 주소 매개변수로 사용, status 는 쿼리로 들어감
+//        redirectAttributes.addAttribute("itemId", savedItem.getId());
+//        redirectAttributes.addAttribute("status", true);
+//        return "redirect:/form/v2/items/{itemId}";
+//    }
+
     @PostMapping("/add")
-    public String addItemV4(@ModelAttribute Item item,
+    public String addItemV6(@Validated @ModelAttribute Item item,
                             BindingResult bindingResult,
                             RedirectAttributes redirectAttributes,
                             Model model) {
 
-        //검증 오류 결과를 보관
-        Map<String, String> errors = new HashMap<>();
-
-        //검증 로직
-        if (!StringUtils.hasText(item.getItemName())) {
-            bindingResult.rejectValue("itemName", "required");
-        }
-        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
-            bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null);
-        }
-        if (item.getQuantity() == null || item.getQuantity() > 9999) {
-            bindingResult.rejectValue("quantity", "max", new Object[]{9999}, null);
-        }
-
-        //특정 필드가 아닌 복합 룰 검증
-        if (item.getPrice() != null && item.getQuantity() != null) {
-            int resultPrice = item.getPrice() * item.getQuantity();
-            if (resultPrice < 10000) {
-                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
-            }
-        }
 
         //검증에 실패하면 다시 입력 폼으로 이동
         if (bindingResult.hasErrors()) {
