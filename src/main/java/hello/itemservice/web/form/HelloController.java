@@ -1,5 +1,6 @@
 package hello.itemservice.web.form;
 
+import hello.itemservice.converter.type.IpPort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,13 @@ public class HelloController {
 
     @GetMapping("/hello/v2")
     public String helloV2(@RequestParam Integer data) {
+        return "ok";
+    }
+
+    @GetMapping("/hello/ip/port")
+    public String ipPort(@RequestParam IpPort ipPort) {
+        System.out.println("ipPort = " + ipPort.getPort());
+        System.out.println("ipPort = " + ipPort.getIp());
         return "ok";
     }
 }

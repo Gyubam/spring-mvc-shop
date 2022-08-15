@@ -1,5 +1,9 @@
 package hello.itemservice.domain.login;
 
+import hello.itemservice.converter.IntegerToStringConverter;
+import hello.itemservice.converter.IpPortToStringConverter;
+import hello.itemservice.converter.StringToIntegerConverter;
+import hello.itemservice.converter.StringToIpPortConverter;
 import hello.itemservice.exception.filter.LogFilter;
 import hello.itemservice.web.filter.LoginCheckFilter;
 import hello.itemservice.web.intercepter.LogInterceptor;
@@ -7,6 +11,7 @@ import hello.itemservice.web.intercepter.LoginCheckInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -31,7 +36,17 @@ public class WebConfig implements WebMvcConfigurer {
                         "/*.ico", "/error/**", "/error-page/**",
                         "/error/*", "/error*", "/hello/**");
     }
-//
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToIntegerConverter());
+        registry.addConverter(new IntegerToStringConverter());
+        registry.addConverter(new StringToIpPortConverter());
+        registry.addConverter(new IpPortToStringConverter());
+
+    }
+
+    //
 //    @Bean
 //    public FilterRegistrationBean logFilter() {
 //        FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
