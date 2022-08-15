@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/", "/members/add",
                         "/login", "/logout", "/css/**",
                         "/*.ico", "/error/**", "/error-page/**",
-                        "/error/*", "/error*");
+                        "/error/*", "/error*", "/hello/**");
     }
 //
 //    @Bean
