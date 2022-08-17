@@ -36,7 +36,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/login", "/logout", "/css/**",
                         "/*.ico", "/error/**", "/error-page/**",
                         "/error/*", "/error*", "/hello/**",
-                        "/servlet/**", "/spring/**", "/items/**");
+                        "/servlet/**", "/spring/**", "/items/**",
+                        "/images/**");
     }
 
     @Override
